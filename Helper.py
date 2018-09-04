@@ -34,7 +34,7 @@ class Translator:
         """Translates given text using the dictionary."""
 
         """p_ges is a regular expression which describes the implemented part of the Whitespace-language"""
-        p_ges = re.compile(r'((AA[AB]*C)|(BCAA)|(BCAB)|(CCC)|(ACC)|(ACA)|(ACB))')
+        p_ges = re.compile(r'((AA[AB]*C)|(BCAA)|(BCAB)|(CCC)|(ACC)|(ACA)|(ACB)|(BAAA)|(BAAB)|(BAAC)|(BABA)|(BABB))')
         """p_with_args represents all implemented commands which take arguments so they need to be handled separately"""
         p_with_args = re.compile('AA')
 
@@ -51,7 +51,7 @@ class Translator:
                     argument = g[pref.end():-1]
                     main_text = d[command]
                     argument = Translator.arg_to_n(argument)
-                    """insert the given argument inside the program"""
+                    """insert the argument inside the program"""
                     res += main_text.replace("argument", argument)
                 else:
                     """the command takes no argument"""

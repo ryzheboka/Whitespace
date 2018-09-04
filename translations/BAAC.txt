@@ -1,0 +1,5 @@
+          ;multiply two characters on top of stack and push the result
+          pop       r9
+          pop       r10
+          imul      r10,r9
+          push      r10

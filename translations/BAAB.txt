@@ -1,0 +1,5 @@
+          ;subtract two characters on top of stack and push the result
+          pop       r9
+          pop       r10
+          sub       r10,r9
+          push      r10

@@ -1,0 +1,5 @@
+          ;add two characters on top of stack and push the result
+          pop       r9
+          pop       r10
+          add       r9,r10
+          push      r9

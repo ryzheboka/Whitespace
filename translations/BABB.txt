@@ -1,0 +1,7 @@
+          ;divide two characters on top of stack and push the quotient
+          pop        r10
+          pop        rax
+          cqo                               ; sign extend value of rax into rdx:rax
+          idiv       r10
+          push       rdx
+
