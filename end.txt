@@ -1,0 +1,75 @@
+
+atoi:
+          mov       r8, input               ; pointer to the next char to read
+          mov       rcx, r8                 ; move base address into r8
+          add       rcx, 6                  ; set the maximum adress for a char
+          mov       r10, 0                  ; initialize int value
+          cmp       byte[r8],49
+          je        atoi.neg_beg
+          cmp       byte[r8],48
+          jmp       atoi.if
+
+.if:
+          cmp       r8,rcx                  ; compare the address of cur char with end address
+          jne       atoi.if_end
+          ret
+
+.if_end:
+          movzx     r9,byte[r8]                ; "read" current char into r9
+          cmp        r9,48            ; compare character to ascii value of 0
+          je        atoi.charzero        ; if character "0" jump to label
+          cmp        r9,49            ; compare character to ascii value of 1
+          je        atoi.charone        ; if character "1" jump to label
+          mov       rax, input
+          cmp       byte[rax],49
+          je        atoi.neg_end
+          ret
+.charzero:
+          shl       r10, 1
+          inc       r8                      ; move the pointer to the next char
+          jmp       atoi.if                 ; go to the condition
+.charone:
+          shl       r10, 1
+          inc       r10                     ; add 1 to the current value
+          inc       r8                      ; move the pointer to the next char
+          jmp       atoi.if                 ; go to the condition
+.neg_beg:
+          inc       r8
+          jmp       atoi.if
+.neg_end:
+          neg       r10
+          ret
+itoa:  ;int needs to be stored in r10
+          mov       r8, output              ;
+          add       r8, 5                   ; set the r8 pointer to the end
+          mov       r11, output             ; load begging address for comparison
+          mov       r9, 10                  ; load ten for division
+          cmp       r10,0                   ; if value is negative, jump
+          jl        itoa.neg
+          jmp       itoa.loop
+
+.loop:
+          mov       rdx, 0                  ; set rdx to 0 as division concatenates rdx and rax
+          mov       rax,r10                 ; move value into rax to divide it later
+          div       r9                      ; divide the value in rax by ten
+          add       rdx, 48                 ; make a character from the int-remainder in rdx
+          mov       [r8],dl                 ; write this character to the address given by the pointer
+          dec       r8                      ; decrease pointer, so next char will be written earlier
+          cmp       r10, r9                 ; if value <10 jump out of loop
+          jae       itoa.loop_end           ;
+          ret
+
+.loop_end:
+          mov       r10, rax                ; move the quotient into r10
+          jmp       itoa.loop               ; jump to begin of loop
+
+.neg:
+          mov       rax,45
+          mov       [r11],rax                ; set first char to "-"
+          inc       r11                      ; set addr of second char as first char
+          neg       r10                      ; create abs value
+          jmp       itoa.loop
+
+          section   .bss
+input:    resb      16
+output:   resb      6

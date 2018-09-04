@@ -1,0 +1,5 @@
+          ;swap two numbers on top of the stack
+          pop       r10
+          pop       r9
+          push      r10
+          push      r9

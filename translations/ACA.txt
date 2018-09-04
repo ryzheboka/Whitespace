@@ -1,0 +1,4 @@
+          ;duplicate the number on top of the stack
+          pop       rax
+          push      rax
+          push      rax

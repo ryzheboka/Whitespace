@@ -1,0 +1,2 @@
+          ; discard the number on the top of the stack
+          pop       rax

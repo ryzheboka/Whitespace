@@ -1,0 +1,2 @@
+          ; Push a number onto stack
+          push      argument

@@ -1,0 +1,11 @@
+          ;Output a number from top of the stack
+          pop       r10
+          call      itoa
+          mov       rax, 0x02000004         ; system call for write
+          mov       rdi, 1                  ; file handle 1 is stdout
+          mov       rdx, 6                  ; number of bytes
+          mov       rsi, output             
+          syscall                           ; invoke operating system to do the write 
+          mov       rax, 0                  ; initialize output to zero
+          mov       rdx, output
+          mov       [rdx], rax

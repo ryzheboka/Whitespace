@@ -1,0 +1,9 @@
+          ;Output a character from top of the stack
+          pop       rax
+          mov       rdx, output
+          mov       [rdx],al 
+          mov       rax, 0x02000004         ; system call for write
+          mov       rdi, 1                  ; file handle 1 is stdout
+          mov       rdx, 6                  ; number of bytes
+          mov       rsi, output             
+          syscall  
