@@ -5,5 +5,8 @@
           mov       rax, 0x02000004         ; system call for write
           mov       rdi, 1                  ; file handle 1 is stdout
           mov       rdx, 6                  ; number of bytes
-          mov       rsi, output             
-          syscall  
+          mov       rsi, output
+          push      qword r11
+          syscall
+          pop      qword r11
+

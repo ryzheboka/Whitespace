@@ -1,0 +1,5 @@
+          ; retrieve a value from the heap
+          mov        rdx,0
+          pop        r8
+          call       read
+          push       r10

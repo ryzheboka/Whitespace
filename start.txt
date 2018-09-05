@@ -10,3 +10,4 @@
           section   .text
 
 start:
+          mov        r11,0

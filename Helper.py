@@ -3,7 +3,6 @@ import os
 
 
 class Translator:
-
     @staticmethod
     def arg_to_n(arg):
         """Translates a number from the whitespace notation into an integer.
@@ -32,9 +31,9 @@ class Translator:
     @staticmethod
     def translate(text):
         """Translates given text using the dictionary."""
-
         """p_ges is a regular expression which describes the implemented part of the Whitespace-language"""
-        p_ges = re.compile(r'((AA[AB]*C)|(BCAA)|(BCAB)|(CCC)|(ACC)|(ACA)|(ACB)|(BAAA)|(BAAB)|(BAAC)|(BABA)|(BABB))')
+        p_ges = re.compile(
+            r'((AA[AB]*C)|(BCAA)|(BCAB)|(CCC)|(ACC)|(ACA)|(ACB)|(BAAA)|(BAAB)|(BAAC)|(BABA)|(BABB)|(BBA)|(BBB))')
         """p_with_args represents all implemented commands which take arguments so they need to be handled separately"""
         p_with_args = re.compile('AA')
 
@@ -64,11 +63,10 @@ class Translator:
 
 
 class Writer:
-
     def __init__(self, f_name, source_code):
-        self.f = open(f_name, "w")   # .asm file
+        self.f = open(f_name, "w")  # .asm file
         print(source_code)
-        self.text = source_code    # preprocessed sourcecode
+        self.text = source_code  # preprocessed sourcecode
 
     def write_head(self):
         """append the 'header' (same for each program translated into nasm (except the filename is inserted))"""
@@ -81,7 +79,6 @@ class Writer:
         """translate the source code, then write the translation into a file"""
 
         self.f.write(Translator.translate(self.text))
-
 
     def write_end(self):
         """finish the translation by adding the final part(same for each program translated
@@ -98,7 +95,6 @@ class Writer:
 
 
 class Preproccessor:
-
     def __init__(self, path):
         self.f = open(path, "r")
 

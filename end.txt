@@ -15,11 +15,11 @@ atoi:
           ret
 
 .if_end:
-          movzx     r9,byte[r8]                ; "read" current char into r9
-          cmp        r9,48            ; compare character to ascii value of 0
-          je        atoi.charzero        ; if character "0" jump to label
-          cmp        r9,49            ; compare character to ascii value of 1
-          je        atoi.charone        ; if character "1" jump to label
+          movzx     r9,byte[r8]              ; "read" current char into r9
+          cmp       r9,48                    ; compare character to ascii value of 0
+          je        atoi.charzero            ; if character "0" jump to label
+          cmp        r9,49                   ; compare character to ascii value of 1
+          je        atoi.charone             ; if character "1" jump to label
           mov       rax, input
           cmp       byte[rax],49
           je        atoi.neg_end
@@ -42,7 +42,7 @@ atoi:
 itoa:  ;int needs to be stored in r10
           mov       r8, output              ;
           add       r8, 5                   ; set the r8 pointer to the end
-          mov       r11, output             ; load begging address for comparison
+          mov       rcx, output             ; load begging address for comparison
           mov       r9, 10                  ; load ten for division
           cmp       r10,0                   ; if value is negative, jump
           jl        itoa.neg
@@ -65,11 +65,37 @@ itoa:  ;int needs to be stored in r10
 
 .neg:
           mov       rax,45
-          mov       [r11],rax                ; set first char to "-"
-          inc       r11                      ; set addr of second char as first char
+          mov       [rcx],rax                ; set first char to "-"
+          inc       rcx                      ; set addr of second char as first char
           neg       r10                      ; create abs value
           jmp       itoa.loop
+store: ; addr in r8, val in r9
+          mov       rax,addrs
+          mov       rcx,r8
+          mov       [rax+r11],ecx
+          mov       rcx,r9
+          mov       rax,vals
+          mov       [rax+r11],ecx
+          add       r11,4
+          ret
+read: ;init rdx before
+          mov       rax,addrs
+          mov       rcx,r8
+          cmp       dword [rax+rdx],ecx
+          je        .read_val
+          add       rdx,4
+          cmp       rdx,49
+          jl        read
+          ret
+
+.read_val:
+          mov       rax,vals
+          movsx     r10, dword [rax+rdx]
+          ret
+
 
           section   .bss
 input:    resb      16
 output:   resb      6
+addrs:    resb      50                       ; contains virtual heap addresses from .ws
+vals:     resb      50                       ; contains corresponding (to addresses from addrs) values

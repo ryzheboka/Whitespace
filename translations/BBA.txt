@@ -1,0 +1,4 @@
+          ; store a value in the heap
+          pop       r9
+          pop       r8
+          call       store
