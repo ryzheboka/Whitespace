@@ -33,7 +33,8 @@ class Translator:
         """Translates given text using the dictionary."""
         """p_ges is a regular expression which describes the implemented part of the Whitespace-language"""
         p_ges = re.compile(
-            r'((AA[AB]*C)|(BCAA)|(BCAB)|(CCC)|(ACC)|(ACA)|(ACB)|(BAAA)|(BAAB)|(BAAC)|(BABA)|(BABB)|(BBA)|(BBB))')
+            r'((AA[AB]*C)|(BCAA)|(BCAB)|(CCC)|'
+            r'(ACC)|(ACA)|(ACB)|(BAAA)|(BAAB)|(BAAC)|(BABA)|(BABB)|(BBA)|(BBB)|(BCBA)|(BCBB))')
         """p_with_args represents all implemented commands which take arguments so they need to be handled separately"""
         p_with_args = re.compile('AA')
 

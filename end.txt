@@ -1,44 +1,52 @@
 
 atoi:
-          mov       r8, input               ; pointer to the next char to read
-          mov       rcx, r8                 ; move base address into r8
-          add       rcx, 6                  ; set the maximum adress for a char
-          mov       r10, 0                  ; initialize int value
-          cmp       byte[r8],49
+	  mov       rcx, r8
+	  add       rcx, 6                  ; set the maximum adress for a char
+	  mov       r10, 0                  ; initialize int value
+          cmp       byte[r8],45
           je        atoi.neg_beg
-          cmp       byte[r8],48
-          jmp       atoi.if
+	  jmp       atoi.if
 
 .if:
           cmp       r8,rcx                  ; compare the address of cur char with end address
-          jne       atoi.if_end
-          ret
-
-.if_end:
-          movzx     r9,byte[r8]              ; "read" current char into r9
-          cmp       r9,48                    ; compare character to ascii value of 0
-          je        atoi.charzero            ; if character "0" jump to label
-          cmp        r9,49                   ; compare character to ascii value of 1
-          je        atoi.charone             ; if character "1" jump to label
+          jne       atoi.if2
           mov       rax, input
-          cmp       byte[rax],49
+          cmp       byte[rax],45
           je        atoi.neg_end
           ret
-.charzero:
-          shl       r10, 1
-          inc       r8                      ; move the pointer to the next char
-          jmp       atoi.if                 ; go to the condition
-.charone:
-          shl       r10, 1
-          inc       r10                     ; add 1 to the current value
-          inc       r8                      ; move the pointer to the next char
-          jmp       atoi.if                 ; go to the condition
+
+.if2:
+          movzx     r9,byte[r8]	            ; "read" current char into r9
+          cmp       r9,48
+          jge       .if3
+          mov       rax, input
+          cmp       byte[rax],45
+          je        atoi.neg_end
+          ret
+.if3:
+          movzx     r9,byte[r8]	            ; "read" current char into r9
+          cmp       r9,57
+          jle       .if4
+          mov       rax, input
+          cmp       byte[rax],45
+          je        atoi.neg_end
+          ret
+
+.if4:
+          sub       r9,48
+          mov       rax,10
+          mul       r10
+          mov       r10,rax
+          add       r10,r9
+          inc       r8
+          jmp       .if
 .neg_beg:
           inc       r8
           jmp       atoi.if
 .neg_end:
           neg       r10
           ret
+
 itoa:  ;int needs to be stored in r10
           mov       r8, output              ;
           add       r8, 5                   ; set the r8 pointer to the end

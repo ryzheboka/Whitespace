@@ -11,7 +11,7 @@ It's a toy project to get learning experience in general and particularly to try
 - [Specification of the whitespace language](https://web.archive.org/web/20151108084710/http://compsoc.dur.ac.uk:80/whitespace/tutorial.html) 
 
 ## List of currently implemented commands
-- Push
+- Push (maximum 32-bit integers)
 - Duplicate
 - Swap
 - Discard
@@ -24,5 +24,7 @@ It's a toy project to get learning experience in general and particularly to try
 - Modulo (Difference to original implementation: remainder always has the sign of the dividend)
 - Store 
 - Retrieve
+- InputNumber
+- InputChar
 
 Hopefully more coming.

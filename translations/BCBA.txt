@@ -1,0 +1,13 @@
+          ;ReadChar
+          mov       rax, 0x02000003         ; system call for read
+          mov       rdi, 0                  ; file handle 0 is stdin
+          mov       rsi, input              ; address to write input
+          mov       rdx, 15                 ; number of bytes
+          push      qword r11
+          syscall
+          pop      qword r11
+          pop        r8
+          mov        rcx,input
+          movzx      r9,byte[rcx]
+          call       store
+
