@@ -1,43 +1,50 @@
-
 atoi:
-	  mov       rcx, r8
-	  add       rcx, 6                  ; set the maximum adress for a char
+	  mov       rdx, r8
+	  add       rdx, 6                  ; set the maximum adress for a char
 	  mov       r10, 0                  ; initialize int value
-          cmp       byte[r8],45
-          je        atoi.neg_beg
+      cmp       byte[r8],45
+      je        atoi.neg_beg
 	  jmp       atoi.if
 
 .if:
-          cmp       r8,rcx                  ; compare the address of cur char with end address
+          cmp       r8,rdx                  ; compare the address of cur char with end address
           jne       atoi.if2
           mov       rax, input
           cmp       byte[rax],45
           je        atoi.neg_end
-          ret
-
+          sub       rcx,8
+          mov       rdx, stack
+          mov       rax, [rdx+rcx]
+          jmp       rax
 .if2:
           movzx     r9,byte[r8]	            ; "read" current char into r9
           cmp       r9,48
           jge       .if3
           mov       rax, input
           cmp       byte[rax],45
-          je        atoi.neg_end
-          ret
+          je        .neg_end
+          sub       rcx,8
+          mov       rdx, stack
+          mov       rax, [rdx+rcx]
+          jmp       rax
 .if3:
           movzx     r9,byte[r8]	            ; "read" current char into r9
           cmp       r9,57
           jle       .if4
           mov       rax, input
           cmp       byte[rax],45
-          je        atoi.neg_end
-          ret
-
+          sub       rcx,8
+          mov       rdx, stack
+          mov       rax, [rdx+rcx]
+          jmp       rax
 .if4:
           sub       r9,48
           mov       rax,10
           mul       r10
           mov       r10,rax
           add       r10,r9
+	      mov       rdx, input
+	      add       rdx, 6                  ; set the maximum adress for a char
           inc       r8
           jmp       .if
 .neg_beg:
@@ -45,12 +52,13 @@ atoi:
           jmp       atoi.if
 .neg_end:
           neg       r10
-          ret
-
+          sub       rcx,8
+          mov       rdx, stack
+          mov       rax, [rdx+rcx]
+          jmp       rax
 itoa:  ;int needs to be stored in r10
           mov       r8, output              ;
           add       r8, 5                   ; set the r8 pointer to the end
-          mov       rcx, output             ; load begging address for comparison
           mov       r9, 10                  ; load ten for division
           cmp       r10,0                   ; if value is negative, jump
           jl        itoa.neg
@@ -65,45 +73,80 @@ itoa:  ;int needs to be stored in r10
           dec       r8                      ; decrease pointer, so next char will be written earlier
           cmp       r10, r9                 ; if value <10 jump out of loop
           jae       itoa.loop_end           ;
-          ret
-
+          sub       rcx,8
+          mov       rdx, stack
+          mov       rax, [rdx+rcx]
+          jmp       rax
 .loop_end:
           mov       r10, rax                ; move the quotient into r10
           jmp       itoa.loop               ; jump to begin of loop
 
 .neg:
           mov       rax,45
-          mov       [rcx],rax                ; set first char to "-"
-          inc       rcx                      ; set addr of second char as first char
+          mov       rdx,output
+          mov       [rdx],rax                ; set first char to "-"
           neg       r10                      ; create abs value
           jmp       itoa.loop
+
 store: ; addr in r8, val in r9
+          cmp       rdx,r11
+          je        .if_new
           mov       rax,addrs
-          mov       rcx,r8
-          mov       [rax+r11],ecx
-          mov       rcx,r9
+          mov       rsi,r8
+          cmp       dword [rax+rdx], esi
+          je        .write
+          add       rdx,4
+          jmp       store
+
+.write:
+          mov       rax,addrs
+          mov       rsi,r8
+          mov       [rax+rdx], esi
+          mov       rsi,r9
           mov       rax,vals
-          mov       [rax+r11],ecx
+          mov       [rax+rdx], esi
+          sub       rcx,8
+          mov       rdx, stack
+          mov       rax, [rdx+rcx]
+          jmp       rax
+
+.if_new:
+          mov       rax,addrs
+          mov       rsi,r8
+          mov       [rax+r11], esi
+          mov       rsi,r9
+          mov       rax,vals
+          mov       [rax+r11], esi
           add       r11,4
-          ret
+          sub       rcx,8
+          mov       rdx, stack
+          mov       rax, [rdx+rcx]
+          jmp       rax
+
+
 read: ;init rdx before
           mov       rax,addrs
-          mov       rcx,r8
-          cmp       dword [rax+rdx],ecx
+          mov       rsi,r8
+          cmp       dword [rax+rdx], esi
           je        .read_val
           add       rdx,4
-          cmp       rdx,49
+          cmp       rdx,1000
           jl        read
-          ret
-
+          sub       rcx,8
+          mov       rdx, stack
+          mov       rax, [rdx+rcx]
+          jmp       rax
 .read_val:
           mov       rax,vals
           movsx     r10, dword [rax+rdx]
-          ret
-
+          sub       rcx,8
+          mov       rdx, stack
+          mov       rax, [rdx+rcx]
+          jmp       rax
 
           section   .bss
 input:    resb      16
 output:   resb      6
-addrs:    resb      50                       ; contains virtual heap addresses from .ws
-vals:     resb      50                       ; contains corresponding (to addresses from addrs) values
+addrs:    resb      1000                       ; contains virtual heap addresses from .ws
+vals:     resb      1000                       ; contains corresponding (to addresses from addrs) values
+stack:    resb      1280

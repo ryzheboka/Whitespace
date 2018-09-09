@@ -1,0 +1,4 @@
+          ;jump if negative
+          pop       rax
+          cmp       rax,0
+          jl        argument1

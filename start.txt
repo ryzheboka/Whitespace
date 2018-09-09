@@ -11,3 +11,4 @@
 
 start:
           mov        r11,0
+          mov        rcx,0

@@ -1,0 +1,4 @@
+          sub       rcx,8
+          mov       rdx, stack
+          mov       rax, [rdx+rcx]
+          jmp       rax

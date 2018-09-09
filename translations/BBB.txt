@@ -1,5 +1,10 @@
           ; retrieve a value from the heap
-          mov        rdx,0
           pop        r8
-          call       read
+          lea       rax,[rel on_argument2]
+          mov       rdx, stack
+          mov       [rdx+rcx], qword rax
+          add        rcx,8
+          mov        rdx,0
+          jmp        read
+on_argument2:
           push       r10

@@ -4,10 +4,26 @@
           mov       rsi, input              ; address to write input
           mov       rdx, 15                 ; number of bytes
           push      qword r11
+          push      rcx
           syscall
-          pop      qword r11
-          mov        r8, input               ; pointer to the next char to read
-          call       atoi
-          pop        r8
-          mov        r9,r10                 ; should be optimized later
-          call       store
+          pop       rcx
+          pop       qword r11
+          mov       r8, input               ; pointer to the next char to read
+          lea       rax,[rel on_argument2]
+          mov       rdx, stack
+          mov       [rdx+rcx], qword rax
+          add       rcx,8
+          jmp       atoi
+          mov       rax, 0                  ; initialize input to zero
+          mov       rdx, input
+          mov       [rdx], rax
+on_argument2:
+          pop       r8
+          mov       r9,r10                 ; should be optimized later
+          lea       rax,[rel on3_argument3]
+          mov       rdx, stack
+          mov       [rdx+rcx], qword rax
+          add       rcx,8
+          mov       rdx,0
+          jmp       store
+on3_argument3:

@@ -1,11 +1,6 @@
-          ; store a value in the heap
-          pop       r9
-          pop       r8
           lea       rax,[rel on_argument2]
           mov       rdx, stack
           mov       [rdx+rcx], qword rax
           add       rcx,8
-          mov       rdx,0
-          jmp       store
-
+          jmp       argument1
 on_argument2:

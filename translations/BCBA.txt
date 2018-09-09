@@ -4,10 +4,17 @@
           mov       rsi, input              ; address to write input
           mov       rdx, 15                 ; number of bytes
           push      qword r11
+          push      rcx
           syscall
-          pop      qword r11
-          pop        r8
-          mov        rcx,input
-          movzx      r9,byte[rcx]
-          call       store
-
+          pop       rcx
+          pop       qword r11
+          pop       r8
+          mov       rax,input
+          movzx     r9,byte[rax]
+          lea       rax,[rel on_argument2]
+          mov       rdx, stack
+          mov       [rdx+rcx], qword rax
+          add       rcx,8
+          mov       rdx,0
+          jmp       store
+on_argument2:

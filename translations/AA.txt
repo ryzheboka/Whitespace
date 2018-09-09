@@ -1,2 +1,2 @@
           ; Push a number onto stack
-          push      qword argument
+          push      qword argument1

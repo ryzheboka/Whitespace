@@ -7,6 +7,10 @@
           mov       rdx, 6                  ; number of bytes
           mov       rsi, output
           push      qword r11
+          push      qword rcx
           syscall
-          pop      qword r11
-
+          pop       qword rcx
+          pop       qword r11
+          mov       rax, 0                  ; initialize output to zero
+          mov       rdx, output
+          mov       [rdx], rax
