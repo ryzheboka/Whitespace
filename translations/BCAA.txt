@@ -3,6 +3,7 @@
           mov       rdx, output
           mov       [rdx],al 
           mov       rax, 0x02000004         ; system call for write
+          push      rdi
           mov       rdi, 1                  ; file handle 1 is stdout
           mov       rdx, 6                  ; number of bytes
           mov       rsi, output
@@ -11,6 +12,7 @@
           syscall
           pop       qword rcx
           pop       qword r11
+          pop       rdi
           mov       rax, 0                  ; initialize output to zero
           mov       rdx, output
           mov       [rdx], rax

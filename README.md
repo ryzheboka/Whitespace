@@ -25,7 +25,7 @@ It's a toy project to get learning experience in general and particularly to try
 - Store 
 - Retrieve
 - InputNumber
-- InputChar - needs to be fixed
+- InputChar 
 - Label (String)
 - Call (Label)
 - Jump (Label)

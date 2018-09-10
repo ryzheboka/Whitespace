@@ -1,5 +1,6 @@
           ;readNumber
           mov       rax, 0x02000003         ; system call for read
+          push      rdi
           mov       rdi, 0                  ; file handle 0 is stdin
           mov       rsi, input              ; address to write input
           mov       rdx, 15                 ; number of bytes
@@ -8,6 +9,7 @@
           syscall
           pop       rcx
           pop       qword r11
+          pop       rdi
           mov       r8, input               ; pointer to the next char to read
           lea       rax,[rel on_argument2]
           mov       rdx, stack

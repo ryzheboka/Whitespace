@@ -77,7 +77,7 @@ class Translator:
                     if on2_arg:
                         main_text=main_text.replace("argument2", str(counter2))
                         counter2 += 1
-                    if g == "BCBB":
+                    if g == "BCBB" or g=="BCBA":
                         main_text=main_text.replace("argument3", str(counter3))
                         counter3 += 1
                     res += main_text
