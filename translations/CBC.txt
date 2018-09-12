@@ -1,4 +1,5 @@
-          sub       rcx,8
+          ; return
+          sub       rcx,8                   ; decrease pointer to the stack (created for function calls, not the stack in nasm)
           mov       rdx, stack
-          mov       rax, [rdx+rcx]
-          jmp       rax
+          mov       rax, [rdx+rcx];         ; mov the address from previous top of the stack into rax
+          jmp       rax                     ; jump to the place the function was called from

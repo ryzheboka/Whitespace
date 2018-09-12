@@ -2,5 +2,5 @@
           pop        r10
           pop        rax
           cqo                               ; sign extend value of rax into rdx:rax
-          idiv       r10
+          idiv       r10                    ; (rdx:ax)/r10
           push       rax

@@ -6,8 +6,8 @@
           push      rdi
           mov       rdi, 1                  ; file handle 1 is stdout
           mov       rdx, 6                  ; number of bytes
-          mov       rsi, output
-          push      qword r11
+          mov       rsi, output             ; beginning address
+          push      qword r11               ; syscall uses rdi,r11 and rcx, so you need to save them
           push      qword rcx
           syscall
           pop       qword rcx

@@ -1,11 +1,11 @@
           ; store a value in the heap
-          pop       r9
-          pop       r8
+          pop       r9                      ;pop value
+          pop       r8                      ;pop address
           lea       rax,[rel on_argument2]
           mov       rdx, stack
-          mov       [rdx+rcx], qword rax
-          add       rcx,8
-          mov       rdx,0
-          jmp       store
+          mov       [rdx+rcx], qword rax    ; push the return address on the stack
+          add       rcx,8                   ; increase stack pointer by 8 (8 byte*8, size of rax register)
+          mov       rdx,0                   ; initialize rdx
+          jmp       store                   ; jump to the function which stores data using r8,r9 as arguments
 
 on_argument2:

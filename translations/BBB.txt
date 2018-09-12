@@ -1,10 +1,10 @@
           ; retrieve a value from the heap
-          pop        r8
+          pop        r8                     ; pop address
           lea       rax,[rel on_argument2]
           mov       rdx, stack
-          mov       [rdx+rcx], qword rax
-          add        rcx,8
-          mov        rdx,0
+          mov       [rdx+rcx], qword rax    ; push the return address on the stack
+          add        rcx,8                  ; increase stack pointer by 8 (8 byte*8, size of rax register)
+          mov        rdx,0                  ; initialize rdx
           jmp        read
 on_argument2:
-          push       r10
+          push       r10                    ; push the result

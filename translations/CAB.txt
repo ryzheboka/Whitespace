@@ -1,3 +1,4 @@
+          ; call
           lea       rax,[rel on_argument2]
           mov       rdx, stack
           mov       [rdx+rcx], qword rax

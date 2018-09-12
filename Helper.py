@@ -31,29 +31,32 @@ class Translator:
     @staticmethod
     def translate(text):
         """Translates given text using the dictionary."""
-        """p_ges is a regular expression which describes the implemented part of the Whitespace-language"""
+        """p_ges is a regular expression which describes the Whitespace-language"""
         p_ges = re.compile(
             r'((AA[AB]*C)|(BCAA)|(BCAB)|(CCC)|'
             r'(ACC)|(ACA)|(ACB)|(BAAA)|(BAAB)|(BAAC)|(BABA)|(BABB)|(BBA)|(BBB)|(BCBA)|(BCBB)|'
             r'(CAA[AB]*C)|(CAC[AB]*C)|(CAB[AB]*C)|(CBA[AB]*C)|(CBC)|(CBB[AB]*C))')
-        """p_with_args represents all implemented commands which take arguments so they need to be handled separately"""
+        """p_with_n_as_arg represents all commands which take an Integer argument"""
         p_with_n_as_arg = re.compile('(AA)')
+        """p_with_n_as_arg represents all commands which take a String as argument"""
         p_with_str_as_arg = re.compile('(CAA)|(CAC)|(CAB)|(CBA)|(CBB)')
         on2 = re.compile('(BBA)|(BBB)|(BCAB)|(BCBA)|(BCBB)|(CAB)')
+        """counters are inserted into label names needed for function calls, so they (label names) are unique"""
         counter2 = 0
         counter3 = 0
-        d = Translator.create_dict()
+
+        d = Translator.create_dict()    # dictionary with command translations
+
         res = ""
         while text:
             m = re.match(p_ges, text)
             if m:
                 g = m.group()
-                #print(g)
                 on2_arg = re.match(on2, g)
                 n_arg = re.match(p_with_n_as_arg, g)
                 str_arg = re.match(p_with_str_as_arg, g)
                 if n_arg:
-                    """the command takes an argument"""
+                    """the command takes an Integer argument"""
                     command = n_arg.group()
                     argument = g[n_arg.end():-1]
                     main_text = d[command]
@@ -61,13 +64,14 @@ class Translator:
                     """insert the argument inside the program"""
                     res += main_text.replace("argument1", str(argument))
                 elif str_arg:
+                    """the command takes a String-argument"""
                     command = str_arg.group()
                     argument = g[str_arg.end():-1]
                     argument = Translator.arg_to_n(argument)
                     main_text = d[command]
-                    main_text = main_text.replace("argument1", "label_" + str(argument).replace("-","0"))
+                    main_text = main_text.replace("argument1", "label_" + str(argument).replace("-", "0"))
                     if on2_arg:
-                        main_text=main_text.replace("argument2", str(counter2))
+                        main_text = main_text.replace("argument2", str(counter2))
                         counter2 += 1
                     """insert the argument inside the program"""
                     res += main_text
@@ -75,25 +79,21 @@ class Translator:
                     """the command takes no argument"""
                     main_text = d[g]
                     if on2_arg:
-                        main_text=main_text.replace("argument2", str(counter2))
+                        main_text = main_text.replace("argument2", str(counter2))
                         counter2 += 1
-                    if g == "BCBB" or g=="BCBA":
-                        main_text=main_text.replace("argument3", str(counter3))
+                    if g == "BCBB" or g == "BCBA":     # the command has two "technical" labels
+                        main_text = main_text.replace("argument3", str(counter3))
                         counter3 += 1
                     res += main_text
                 text = text[m.end():]
             else:
-                #print(text)
-                print("WARNING: Contains not implemented or not existing commands")
-                text = text[1:]
-
+                raise Exception("Contains not implemented or not existing commands")
         return res
 
 
 class Writer:
     def __init__(self, f_name, source_code):
         self.f = open(f_name, "w")  # .asm file
-        # print(source_code)
         self.text = source_code  # preprocessed sourcecode
 
     def write_head(self):

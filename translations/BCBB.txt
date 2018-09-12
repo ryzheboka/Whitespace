@@ -11,21 +11,21 @@
           pop       qword r11
           pop       rdi
           mov       r8, input               ; pointer to the next char to read
-          lea       rax,[rel on_argument2]
-          mov       rdx, stack
-          mov       [rdx+rcx], qword rax
-          add       rcx,8
-          jmp       atoi
+          lea       rax,[rel on_argument2]  ; see below
+          mov       rdx, stack              ; see below
+          mov       [rdx+rcx], qword rax    ; see below
+          add       rcx,8                   ; see below
+          jmp       atoi                    ; function call of atoi (turns string into integer)
           mov       rax, 0                  ; initialize input to zero
           mov       rdx, input
           mov       [rdx], rax
 on_argument2:
           pop       r8
           mov       r9,r10                 ; should be optimized later
-          lea       rax,[rel on3_argument3]
-          mov       rdx, stack
-          mov       [rdx+rcx], qword rax
-          add       rcx,8
-          mov       rdx,0
-          jmp       store
+          lea       rax,[rel on3_argument3]  ; see below
+          mov       rdx, stack               ; see below
+          mov       [rdx+rcx], qword rax     ; see below
+          add       rcx,8                    ; see below (jmp store)
+          mov       rdx,0                    ; initialize rdx
+          jmp       store                    ; function call of store
 on3_argument3:

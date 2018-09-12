@@ -3,7 +3,7 @@
           mov       rdx, stack
           mov       [rdx+rcx], qword rax
           add       rcx,8
-          jmp       input_
+          jmp       input_                  ; function call of input_
 on_argument2:
           pop       r8
           lea       rax,[rel on3_argument3]
@@ -11,5 +11,5 @@ on_argument2:
           mov       [rdx+rcx], qword rax
           add       rcx,8
           mov       rdx,0
-          jmp       store
+          jmp       store                   ; function call of store
 on3_argument3:
