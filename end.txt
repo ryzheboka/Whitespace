@@ -154,10 +154,13 @@ input_:
           mov       rax, [rdx+rcx]
           jmp       rax
 .init:
+          mov       rax, 0                  ; initialize input to zero
+          mov       rdx, input
+          mov       [rdx], rax
           mov       rax, 0x02000003         ; system call for read
           mov       rdi, 0                  ; file handle 0 is stdin
           mov       rsi, input              ; address to write input
-          mov       rdx, 15                 ; number of bytes
+          mov       rdx, 16                 ; number of bytes
           push      qword r11
           push      rcx
           syscall
