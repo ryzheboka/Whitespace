@@ -3,20 +3,27 @@
 # Problem: cannot handle programs which take input
 
 #!/usr/bin/env bash
+echo "Does the program you want to run use input? (enter 'yes' if so)"
+read hasinput
 
-echo "Please enter the filename without extension (a .ws file is expected)"
-read filename
+if [ $hasinput = yes ]
+then
+    echo "Sorry, that part isn't implemented yet"
 
-python3 wsCompiler.py $filename.ws
-nasm -fmacho64 $filename.asm && ld $filename.o
+else
+    echo "Please enter the filename without extension (a .ws file is expected)"
+    read filename
 
-start=$(python -c 'import time; print time.time()')
+    python3 wsCompiler.py $filename.ws
+    nasm -fmacho64 $filename.asm && ld $filename.o
 
-for value in {1..10000}
-do
-    [./a.out]  &>/dev/null  # run without showing the output
-done
+    start=$(python -c 'import time; print time.time()')
 
-dur=$(echo "($(date +%s) - $start)/10000" | bc -l)
+    for value in {1..10000}
+    do
+        [./a.out]  &>/dev/null  # run without showing the output
+    done
+fi
+dur=$(echo "($(python -c 'import time; print time.time()') - $start)/10000" | bc -l)
 echo "Average execution time:"
 echo $dur
