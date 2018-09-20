@@ -10,7 +10,7 @@ read filename
 python3 wsCompiler.py $filename.ws
 nasm -fmacho64 $filename.asm && ld $filename.o
 
-start=$(date +%s) # Problem: rounds to seconds
+start=$(python -c 'import time; print time.time()')
 
 for value in {1..10000}
 do
