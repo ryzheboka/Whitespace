@@ -21,7 +21,7 @@ then
 
     for value in {1..5000}
     do
-        [$filenameexp]  &>/dev/null  # run without showing the output
+        $filenameexp  &>/dev/null  # run without showing the output
     done
 else
 
@@ -32,6 +32,6 @@ else
         [./a.out]  &>/dev/null  # run without showing the output
     done
 fi
-dur=$(echo "($(python -c 'import time; print time.time()') - $start)/10000" | bc -l)
+dur=$(echo "($(python -c 'import time; print time.time()') - $start)/5000" | bc -l)
 echo "Average execution time:"
 echo $dur

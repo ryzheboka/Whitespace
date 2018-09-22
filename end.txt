@@ -88,7 +88,7 @@ itoa:  ;int needs to be stored in r10
           neg       r10                      ; create abs value
           jmp       itoa.loop
 
-store: ; addr in r8, val in r9
+store: ; addr in r8, val in r10
           cmp       rdx,r11
           je        .if_new
           mov       rax,addrs
@@ -102,7 +102,7 @@ store: ; addr in r8, val in r9
           mov       rax,addrs
           mov       rsi,r8
           mov       [rax+rdx], esi
-          mov       rsi,r9
+          mov       rsi,r10
           mov       rax,vals
           mov       [rax+rdx], esi
           sub       rcx,8

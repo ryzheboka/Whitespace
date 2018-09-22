@@ -21,7 +21,6 @@
           mov       [rdx], rax
 on_argument2:
           pop       r8
-          mov       r9,r10                 ; should be optimized later
           lea       rax,[rel on3_argument3]  ; see below
           mov       rdx, stack               ; see below
           mov       [rdx+rcx], qword rax     ; see below
