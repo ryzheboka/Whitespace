@@ -2,3 +2,4 @@ __pycache__/
 .DS_Store
 a.out
 *.exp
+wsInterpreter
