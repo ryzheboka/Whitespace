@@ -2,20 +2,24 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#define BUFFERSIZE 100
+
+typedef struct whitespace_command{
+    int  notation_length;
+    char *notation;
+    void (*execute) ();
+} command;
 
 int read_input();
-int remove_comments();
 
 int main()
 {
-  read_input();
   printf("Not implemented yet");
   return 0;
 }
 
 int read_input()
 {
+    const int BUFFERSIZE = 100;
     char *text = calloc(1,1), buffer[BUFFERSIZE];
     bool stop = false;
     char quit[] = "quit\n";
