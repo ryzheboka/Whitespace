@@ -1,16 +1,20 @@
-# Whitespace compiler for 64-bit macOS 
+# Whitespace compiler for 64-bit macOS
 Translates programs from whitespace into x86_64 nasm assembly. 
 wsCompiler.py creates an equivalent .asm file for the given .ws file. To run the .asm file, execute the command given at the top of the file (requires an up-to-date version of nasm).
 Unclear parts of the standard are implemented by mimicking the behaviour of the [original implementation](https://web.archive.org/web/20150717140342/http://compsoc.dur.ac.uk:80/whitespace/download.php) (v 0.2).
 
+## Additional Whitespace interpreter in C
+The Interpreter is not fully implemented yet, so it does't work.
+Although a Whitespace interpreter in C has been already published on GitHub, I would like to try writing one by my own as a learning experience.
+
 ## Why
 
-It's a toy project to get learning experience in general and particularly to try out assembly. Inspired by [this very fun course](https://www.nand2tetris.org/).
+It's a toy project to get learning experience in general and particularly to try out assembly and c. Inspired by [this very fun course](https://www.nand2tetris.org/).
 
 ## References
 - [Specification of the whitespace language](https://web.archive.org/web/20151108084710/http://compsoc.dur.ac.uk:80/whitespace/tutorial.html) 
 
-## List of implemented commands
+## List of implemented commands 
 - Push (Integer)
 - Duplicate
 - Swap
