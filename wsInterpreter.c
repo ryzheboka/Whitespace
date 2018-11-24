@@ -2,27 +2,41 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <math.h>
 
 struct whitespace_command{
-    char** notation;
-    void (**execute) (char* argument);
-    bool *has_argument;
+    char ** notation;
+    void (** execute) (char * argument);
+    bool * has_argument;
 } commands;
+
+struct current_state{
+    char * command;
+    char * argument;
+    char * current_str;
+    int command_index;
+} state;
 
 int read_input();
 int define_commands();
+void process_input_line(char * line);
+void search_command();
+void execute_command();
+
 int ws_argument_to_int(char*);
 
 void push(char*);
 void output_number(char*);
 
-int* stack_ptr;
+const char * charset = "\11\12\40";
 
-int *heap;
+int * stack_ptr;
+int * heap;
 
 int main()
 {
-    printf("Not implemented yet");
+    printf("Not fully implemented yet \n");
+    define_commands();
     read_input();
     return 0;
 }
@@ -36,26 +50,32 @@ int define_commands()
 
     const int max_command_size = 4;
     const int number_of_commands = 2;
-    commands.notation = calloc(number_of_commands, sizeof(char*));
+    commands.notation = calloc(number_of_commands, sizeof(char *));
     commands.execute = calloc(number_of_commands, sizeof(void(*)(char *)));
+    commands.has_argument = calloc(number_of_commands, sizeof(bool));
 
-    *commands.notation = '\40\40';   // 40 is ascii code for space in octal
+
+    *commands.notation = calloc(max_command_size, sizeof(char));
+    *commands.notation = "\40\40";   // 40 is ascii code for space in octal
     *commands.execute = &push;
     *commands.has_argument = true;
 
-    *(commands.notation+1) = '\11\12\40\40';
+    *(commands.notation+1) = "\11\12\40\11";
     *(commands.execute+1) = &output_number;
     *(commands.has_argument+1) = false;
 
-      return 0;
+    return 0;
 }
 int read_input()
 {
-    char *current_command = calloc(1,4);
-    char *current_argument = calloc(1,64);
-    char *buffer = calloc(1,64);
+    char * buffer = (char*) calloc(1,64);
+    state.command = (char*) calloc(1,4);
+    state.argument = (char*) calloc(1,64);
+    state.current_str = state.command;
+
     bool stop = false;
-    char quit[] = "quit\n";
+    char *quit = "quit\n";
+
     while(!stop && fgets(buffer, 64, stdin)) /* break by typing enter then "quit" then enter*/
     {
         if (strcmp(buffer, quit)==0)
@@ -64,7 +84,7 @@ int read_input()
         }
         else
         {
-            printf("%s",buffer);
+            process_input_line(buffer);
         }
     }
 
@@ -73,25 +93,63 @@ int read_input()
 
 int ws_argument_to_int(char* ws_number)
 {
-    int dec_number = 0;
-    for (int count = 0; count< strlen(ws_number); ++count)
+    int count, dec_number = 0, power=0;
+    for (count = strlen(ws_number)-2; count>-1; --count)
     {
-        dec_number += *(ws_number+count)==20 ? 0 : 2^count;
+        if (*(ws_number+count)==32) dec_number += 0;
+        if (*(ws_number+count)==9) dec_number += pow (2,power);
+        power++;
     }
     return dec_number;
 }
 
+void process_input_line(char* line){
+    int count;
+    for (count = 0; count<strlen(line); ++count){
+        if (strchr(charset, *(line+count)) != NULL){
+            *(state.current_str+strlen(state.current_str)) = *(line+count);
+            if (state.current_str == state.command) search_command();
+            if (state.current_str != state.command && *(line+count)==10) execute_command();
+        }
+    }
+}
+
+void search_command(){
+    int i;
+    for (i = 0; i < 2; ++i) {
+        if(strcmp(*(commands.notation+i), state.command) == 0) {
+            if (!*(commands.has_argument+i)) (*(commands.execute+i))(state.argument);
+            else {
+                state.current_str = state.argument;
+                state.command_index = i;
+            }
+            return;
+        }
+    }
+}
+
+void execute_command(){
+    (*(commands.execute+state.command_index))(state.argument);
+    memset(state.argument, '\0', strlen(state.argument)*sizeof(char));
+    memset(state.command, '\0', strlen(state.command)*sizeof(char));
+    state.current_str = state.command;
+}
+
 void push(char* argument)
 {
-  int n = ws_argument_to_int(argument);
-  *stack_ptr = n;
-  stack_ptr++;
+    printf("Executing Push\n");
+
+    int n = ws_argument_to_int(argument);
+    *stack_ptr = n;
+    stack_ptr++;
 }
 
 void output_number(char* argument)
 {
-  int n = *(stack_ptr-1);
-  printf("%d", n);
-  stack_ptr--;
+    printf("Executing Output Number\n");
+
+    int n = *(stack_ptr-1);
+    printf("%d", n);
+    stack_ptr--;
 }
 
