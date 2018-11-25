@@ -60,10 +60,15 @@ int define_commands()
     *commands.execute = &push;
     *commands.has_argument = true;
 
+    *(commands.notation+1) = calloc(max_command_size, sizeof(char));
     *(commands.notation+1) = "\11\12\40\11";
     *(commands.execute+1) = &output_number;
     *(commands.has_argument+1) = false;
 
+    *(commands.notation+2) = calloc(max_command_size, sizeof(char));
+    *(commands.notation+2) = "\11\12\40\40";
+    *(commands.execute+2) = &output_char;
+    *(commands.has_argument+2) = false;
     return 0;
 }
 int read_input()
@@ -150,6 +155,15 @@ void output_number(char* argument)
 
     int n = *(stack_ptr-1);
     printf("%d", n);
+    stack_ptr--;
+}
+
+void output_char(char* argument)
+{
+    printf("Executing Output Char\n");
+
+    int n = *(stack_ptr-1);
+    printf("%c", n);
     stack_ptr--;
 }
 
