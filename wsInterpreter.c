@@ -27,6 +27,7 @@ int ws_argument_to_int(char*);
 
 void push(char*);
 void output_number(char*);
+void output_char(char*);
 
 const char * charset = "\11\12\40";
 
@@ -49,7 +50,7 @@ int define_commands()
 
 
     const int max_command_size = 4;
-    const int number_of_commands = 2;
+    const int number_of_commands = 3;
     commands.notation = calloc(number_of_commands, sizeof(char *));
     commands.execute = calloc(number_of_commands, sizeof(void(*)(char *)));
     commands.has_argument = calloc(number_of_commands, sizeof(bool));
@@ -58,7 +59,7 @@ int define_commands()
     *commands.notation = calloc(max_command_size, sizeof(char));
     *commands.notation = "\40\40";   // 40 is ascii code for space in octal
     *commands.execute = &push;
-    *commands.has_argument = true;
+    *commands.has_argument = 1;
 
     *(commands.notation+1) = calloc(max_command_size, sizeof(char));
     *(commands.notation+1) = "\11\12\40\11";
@@ -74,14 +75,15 @@ int define_commands()
 int read_input()
 {
     char * buffer = (char*) calloc(1,64);
+    char *text = (char*) calloc(1,1);
     state.command = (char*) calloc(1,4);
     state.argument = (char*) calloc(1,64);
     state.current_str = state.command;
 
     bool stop = false;
-    char *quit = "quit\n";
+    char *quit = "run\n";
 
-    while(!stop && fgets(buffer, 64, stdin)) /* break by typing enter then "quit" then enter*/
+    while(!stop && fgets(buffer, 64, stdin)) /* execute by typing enter then "run" then enter*/
     {
         if (strcmp(buffer, quit)==0)
         {
@@ -89,10 +91,11 @@ int read_input()
         }
         else
         {
-            process_input_line(buffer);
+            text = realloc(text, strlen(text)+1+strlen(buffer));
+            strcat(text, buffer);
         }
     }
-
+    process_input_line(text);
     return 0;
  }
 
@@ -114,7 +117,7 @@ void process_input_line(char* line){
         if (strchr(charset, *(line+count)) != NULL){
             *(state.current_str+strlen(state.current_str)) = *(line+count);
             if (state.current_str == state.command) search_command();
-            if (state.current_str != state.command && *(line+count)==10) execute_command();
+            else if (state.current_str != state.command && *(line+count)==10) execute_command();
         }
     }
 }
@@ -123,7 +126,10 @@ void search_command(){
     int i;
     for (i = 0; i < 2; ++i) {
         if(strcmp(*(commands.notation+i), state.command) == 0) {
-            if (!*(commands.has_argument+i)) (*(commands.execute+i))(state.argument);
+            if (!*(commands.has_argument+i)) {
+            (*(commands.execute+i))(state.argument);
+            memset(state.command, '\0', strlen(state.command)*sizeof(char));
+            }
             else {
                 state.current_str = state.argument;
                 state.command_index = i;
@@ -142,7 +148,7 @@ void execute_command(){
 
 void push(char* argument)
 {
-    printf("Executing Push\n");
+    //printf("Executing Push\n");
 
     int n = ws_argument_to_int(argument);
     *stack_ptr = n;
@@ -151,7 +157,7 @@ void push(char* argument)
 
 void output_number(char* argument)
 {
-    printf("Executing Output Number\n");
+    //printf("Executing Output Number\n");
 
     int n = *(stack_ptr-1);
     printf("%d", n);
