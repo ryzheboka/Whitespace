@@ -4,17 +4,19 @@
 #include <stdbool.h>
 #include <math.h>
 
+// contains pointers to three arrays, elements with the same index describe one whitespace instruction
 struct whitespace_command{
-    char ** notation;
-    void (** execute) (char * argument);
-    bool * has_argument;
+    char ** notation;   // instruction in whitespace
+    void (** execute) (char * argument);   //corresponding function, that should be executed
+    bool * has_argument;    // true if the instruction is followed by an argument
 } commands;
 
+// describes state of the interpreter
 struct current_state{
-    char * command;
-    char * argument;
-    char * current_str;
-    int command_index;
+    char * command;   // command that should be executed next
+    char * argument;  // argument that should be passed to the next executed command
+    char * current_str;  // same as command, if next symbol belongs to command, else same as argument
+    int command_index;  // index, where to find the command, that should be executed next
 } state;
 
 int read_input();
@@ -29,19 +31,19 @@ void push(char*);
 void output_number(char*);
 void output_char(char*);
 
-const char * charset = "\11\12\40";
+const char * charset = "\11\12\40";     // chars that are symbols in Whitespace, everything else is comment
 
 int * stack_ptr;
 int * heap;
 
 int main()
 {
-    printf("Not fully implemented yet \n");
     define_commands();
     read_input();
     return 0;
 }
 
+// fills the arrays that describe implemented ws-commands
 int define_commands()
 {
 
@@ -72,6 +74,8 @@ int define_commands()
     *(commands.has_argument+2) = false;
     return 0;
 }
+
+// reads whole input into a variable, then executes given ws-program
 int read_input()
 {
     char * buffer = (char*) calloc(1,64);
@@ -99,18 +103,22 @@ int read_input()
     return 0;
  }
 
+
+// converts a number that is written according to the specification of ws into an integer
 int ws_argument_to_int(char* ws_number)
 {
     int count, dec_number = 0, power=0;
-    for (count = strlen(ws_number)-2; count>-1; --count)
+    for (count = strlen(ws_number)-2; count>0; --count)
     {
         if (*(ws_number+count)==32) dec_number += 0;
         if (*(ws_number+count)==9) dec_number += pow (2,power);
         power++;
     }
+    if (*(ws_number)==9)  dec_number = -dec_number;
     return dec_number;
 }
 
+// given a sequence of characters, ignores comments and executes commands in the same order
 void process_input_line(char* line){
     int count;
     for (count = 0; count<strlen(line); ++count){
@@ -121,7 +129,10 @@ void process_input_line(char* line){
         }
     }
 }
-
+// Searches the current command in the array of commands.
+// if the command does't take any argument, executes it and initializes current command to empty
+// else stores the index of the command and returns
+// in the second case, the command will be executed after getting the argument
 void search_command(){
     int i;
     for (i = 0; i < 2; ++i) {
@@ -138,7 +149,7 @@ void search_command(){
         }
     }
 }
-
+// executes the command with current index and initializes current_str, current command and current argument.
 void execute_command(){
     (*(commands.execute+state.command_index))(state.argument);
     memset(state.argument, '\0', strlen(state.argument)*sizeof(char));
@@ -146,27 +157,28 @@ void execute_command(){
     state.current_str = state.command;
 }
 
+//function equivalent to whitespace command "push"
+// pushes it's argument onto stack
 void push(char* argument)
 {
-    //printf("Executing Push\n");
 
     int n = ws_argument_to_int(argument);
     *stack_ptr = n;
     stack_ptr++;
 }
-
+//function equivalent to whitespace command "output number"
+// outputs the top integer from the stack
 void output_number(char* argument)
 {
-    //printf("Executing Output Number\n");
 
     int n = *(stack_ptr-1);
     printf("%d", n);
     stack_ptr--;
 }
-
+//function equivalent to whitespace command "output character"
+// outputs the character corresponding to the top integer from the stack
 void output_char(char* argument)
 {
-    printf("Executing Output Char\n");
 
     int n = *(stack_ptr-1);
     printf("%c", n);
