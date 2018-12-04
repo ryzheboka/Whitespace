@@ -38,8 +38,7 @@ int * heap;
 
 int main()
 {
-    define_commands();
-    read_input();
+    if (define_commands()==0) read_input();
     return 0;
 }
 
@@ -49,26 +48,44 @@ int define_commands()
 
     stack_ptr = (int*) calloc(562, sizeof(int));
     heap = (int*) calloc(562, sizeof(int));
-
+    if (!(stack_ptr && heap)) {
+        fprintf(stderr, "error: memory allocation failed in defining stack or heap");
+        return 1;
+    }
 
     const int max_command_size = 4;
     const int number_of_commands = 3;
     commands.notation = calloc(number_of_commands, sizeof(char *));
     commands.execute = calloc(number_of_commands, sizeof(void(*)(char *)));
     commands.has_argument = calloc(number_of_commands, sizeof(bool));
-
+    if (!(commands.notation && commands.has_argument && commands.execute)) {
+        fprintf(stderr, "error: memory allocation failed in defining commands");
+        return 1;
+    }
 
     *commands.notation = calloc(max_command_size, sizeof(char));
+    if (!*commands.notation) {
+       fprintf(stderr, "error: memory allocation for the first command failed");
+       return 1;
+    }
     *commands.notation = "\40\40";   // 40 is ascii code for space in octal
     *commands.execute = &push;
     *commands.has_argument = 1;
 
     *(commands.notation+1) = calloc(max_command_size, sizeof(char));
+    if (!(*commands.notation+1)) {
+       fprintf(stderr, "error: memory allocation for the second command failed");
+       return 1;
+    }
     *(commands.notation+1) = "\11\12\40\11";
     *(commands.execute+1) = &output_number;
     *(commands.has_argument+1) = false;
 
     *(commands.notation+2) = calloc(max_command_size, sizeof(char));
+    if (!(*commands.notation+2)) {
+       fprintf(stderr, "error: memory allocation  for the third command failed");
+       return 1;
+    }
     *(commands.notation+2) = "\11\12\40\40";
     *(commands.execute+2) = &output_char;
     *(commands.has_argument+2) = false;
@@ -79,9 +96,13 @@ int define_commands()
 int read_input()
 {
     char * buffer = (char*) calloc(1,64);
-    char *text = (char*) calloc(1,1);
+    char * text = (char*) calloc(1,1);
     state.command = (char*) calloc(1,4);
     state.argument = (char*) calloc(1,64);
+    if (!(buffer && text && state.command && state.argument)) {
+        fprintf(stderr, "error: memory allocation failed im preparing for reading input");
+        return 1;
+    }
     state.current_str = state.command;
 
     bool stop = false;
@@ -96,9 +117,14 @@ int read_input()
         else
         {
             text = realloc(text, strlen(text)+1+strlen(buffer));
+            if (!text) {
+                fprintf(stderr, "error: memory reallocation failed");
+                return 1;
+                }
             strcat(text, buffer);
         }
     }
+    free(buffer);
     process_input_line(text);
     return 0;
  }
