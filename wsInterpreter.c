@@ -19,8 +19,17 @@ struct current_state{
     int command_index;  // index, where to find the command, that should be executed next
 } state;
 
+const char * charset = "\11\12\40";     // chars that are symbols in Whitespace, everything else is comment
+const int max_command_size = 4;
+const int number_of_commands = 3;
+
+int * stack_ptr;
+int * heap;
+
 int read_input();
 int define_commands();
+int define_single_command(char* c_notation, void function_to_execute (char*), bool c_has_argument, int c_counter);
+void free_global();
 void process_input_line(char * line);
 void search_command();
 void execute_command();
@@ -30,11 +39,6 @@ int ws_argument_to_int(char*);
 void push(char*);
 void output_number(char*);
 void output_char(char*);
-
-const char * charset = "\11\12\40";     // chars that are symbols in Whitespace, everything else is comment
-
-int * stack_ptr;
-int * heap;
 
 int main()
 {
@@ -53,8 +57,6 @@ int define_commands()
         return 1;
     }
 
-    const int max_command_size = 4;
-    const int number_of_commands = 3;
     commands.notation = calloc(number_of_commands, sizeof(char *));
     commands.execute = calloc(number_of_commands, sizeof(void(*)(char *)));
     commands.has_argument = calloc(number_of_commands, sizeof(bool));
@@ -63,35 +65,27 @@ int define_commands()
         return 1;
     }
 
-    *commands.notation = calloc(max_command_size, sizeof(char));
-    if (!*commands.notation) {
-       fprintf(stderr, "error: memory allocation for the first command failed");
-       return 1;
-    }
-    *commands.notation = "\40\40";   // 40 is ascii code for space in octal
-    *commands.execute = &push;
-    *commands.has_argument = 1;
+    int c1 = define_single_command("\40\40", &push, 1, 0);
 
-    *(commands.notation+1) = calloc(max_command_size, sizeof(char));
-    if (!(*commands.notation+1)) {
-       fprintf(stderr, "error: memory allocation for the second command failed");
-       return 1;
-    }
-    *(commands.notation+1) = "\11\12\40\11";
-    *(commands.execute+1) = &output_number;
-    *(commands.has_argument+1) = false;
+    int c2 = define_single_command("\11\12\40\11", &output_number, false, 1);
 
-    *(commands.notation+2) = calloc(max_command_size, sizeof(char));
-    if (!(*commands.notation+2)) {
-       fprintf(stderr, "error: memory allocation  for the third command failed");
-       return 1;
-    }
-    *(commands.notation+2) = "\11\12\40\40";
-    *(commands.execute+2) = &output_char;
-    *(commands.has_argument+2) = false;
+    int c3 = define_single_command("\11\12\40\40", &output_char, false, 2);
+
+    printf("%d", *commands.notation);
+    if (c1==1 || c2==1 || c3==1) return 1;  // inside of define_command occurred an error
     return 0;
 }
 
+int define_single_command(char* c_notation, void function_to_execute(char *), bool c_has_argument, int c_counter){
+    if (!(*commands.notation+c_counter)) {
+       fprintf(stderr, "error: memory allocation for the second command failed");
+       return 1;
+    }
+    *(commands.notation+c_counter) = c_notation;
+    *(commands.execute+c_counter) = function_to_execute;
+    *(commands.has_argument+c_counter) = c_has_argument;
+    return 0;
+}
 // reads whole input into a variable, then executes given ws-program
 int read_input()
 {
@@ -126,9 +120,19 @@ int read_input()
     }
     free(buffer);
     process_input_line(text);
+    free_global();
     return 0;
  }
 
+void free_global() {
+    free(stack_ptr);
+    free(heap);
+    free(commands.notation);
+    free(commands.execute);
+    free(commands.has_argument);
+    free(state.argument);
+    free(state.command);
+}
 
 // converts a number that is written according to the specification of ws into an integer
 int ws_argument_to_int(char* ws_number)
