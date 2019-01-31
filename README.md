@@ -3,6 +3,13 @@ Translates programs from whitespace into x86_64 nasm assembly.
 wsCompiler.py creates an equivalent .asm file for the given .ws file. To run the .asm file, execute the command given at the top of the file (requires an up-to-date version of nasm).
 Unclear parts of the standard are implemented by mimicking the behaviour of the [original implementation](https://web.archive.org/web/20150717140342/http://compsoc.dur.ac.uk:80/whitespace/download.php) (v 0.2).
 
+## How to run Whitespace compiler?
+Examples are available in the original implementation, you can download them [here](https://web.archive.org/web/20150717140342/http://compsoc.dur.ac.uk:80/whitespace/download.php).
+Below is an example of running wsCompiler.py on a whitespace program available in the original implementation.
+
+```$ python3 Whitespace/wsCompiler.py WSpace/examples/fact.ws```
+
+After running the command, a .asm file should appear in the same directory as the .ws file. This .asm file contains instructions for executing.
 ## Note on the repository structure
 Assembly snippets equivalent to different Whitespace instructions are saved in the folder "translations". "start.txt" contains the header of the .asm file and "end.txt" contains functions used in the
 body of the program.  WsCompiler.py, reads the Whitespace instructions, combines the corresponding snippets and replaces command arguments.
