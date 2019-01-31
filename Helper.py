@@ -23,8 +23,8 @@ class Translator:
         """creates a dictionary of commands in Whitespace mapped to their equivalent in nasm"""
 
         d = dict()
-        for file in os.listdir("translations"):
-            with open("translations/" + file, "r") as f:
+        for file in os.listdir(os.path.dirname(os.path.abspath(__file__))+"/translations"):
+            with open(os.path.dirname(os.path.abspath(__file__))+"/translations/" + file, "r") as f:
                 d[os.path.splitext(file)[0]] = f.read()
         return d
 
@@ -99,7 +99,7 @@ class Writer:
     def write_head(self):
         """append the 'header' (same for each program translated into nasm (except the filename is inserted))"""
 
-        with open("start.txt", "r") as file:
+        with open(os.path.dirname(os.path.abspath(__file__))+"/start.txt", "r") as file:
             content = file.read().replace("filename", os.path.splitext(os.path.split(self.f.name)[1])[0])
             self.f.write(content)
 
@@ -112,7 +112,7 @@ class Writer:
         """finish the translation by adding the final part(same for each program translated
         into nasm, contains two functions for input and output and the .bss section)"""
 
-        with open("end.txt", "r") as file:
+        with open(os.path.dirname(os.path.abspath(__file__))+"/end.txt", "r") as file:
             self.f.write(file.read())
         self.f.close()
 
