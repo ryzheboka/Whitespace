@@ -21,9 +21,10 @@ struct current_state{
 
 const char * charset = "\11\12\40";     // chars that are symbols in Whitespace, everything else is comment
 const int max_command_size = 4;
-const int number_of_commands = 3;
+const int number_of_commands = 4;
 
 int * stack_ptr;
+int stack_counter;
 int * heap;
 
 int read_input();
@@ -39,6 +40,7 @@ int ws_argument_to_int(char*);
 void push(char*);
 void output_number(char*);
 void output_char(char*);
+void duplicate(char*);
 
 int main()
 {
@@ -71,14 +73,15 @@ int define_commands()
 
     int c3 = define_single_command("\11\12\40\40", &output_char, false, 2);
 
-    printf("%d", *commands.notation);
-    if (c1==1 || c2==1 || c3==1) return 1;  // inside of define_command occurred an error
+    int c4 = define_single_command("\40\12\40", &duplicate, false, 3);
+
+    if (c1==1 || c2==1 || c3==1 || c4==1) return 1;  // inside of define_command occurred an error
     return 0;
 }
 
 int define_single_command(char* c_notation, void function_to_execute(char *), bool c_has_argument, int c_counter){
-    if (!(*commands.notation+c_counter)) {
-       fprintf(stderr, "error: memory allocation for the second command failed");
+    if ((commands.notation+c_counter)==NULL) {
+       fprintf(stderr, "error: memory allocation for a command failed\n");
        return 1;
     }
     *(commands.notation+c_counter) = c_notation;
@@ -94,7 +97,7 @@ int read_input()
     state.command = (char*) calloc(1,4);
     state.argument = (char*) calloc(1,64);
     if (!(buffer && text && state.command && state.argument)) {
-        fprintf(stderr, "error: memory allocation failed im preparing for reading input");
+        fprintf(stderr, "error: memory allocation failed im preparing for reading input\n");
         return 1;
     }
     state.current_str = state.command;
@@ -165,7 +168,7 @@ void process_input_line(char* line){
 // in the second case, the command will be executed after getting the argument
 void search_command(){
     int i;
-    for (i = 0; i < 2; ++i) {
+    for (i = 0; i < number_of_commands; ++i) {
         if(strcmp(*(commands.notation+i), state.command) == 0) {
             if (!*(commands.has_argument+i)) {
             (*(commands.execute+i))(state.argument);
@@ -193,25 +196,30 @@ void push(char* argument)
 {
 
     int n = ws_argument_to_int(argument);
-    *stack_ptr = n;
-    stack_ptr++;
+    *(stack_ptr+stack_counter) = n;
+    stack_counter++;
 }
 //function equivalent to whitespace command "output number"
 // outputs the top integer from the stack
 void output_number(char* argument)
 {
 
-    int n = *(stack_ptr-1);
+    int n = *(stack_ptr+stack_counter-1);
     printf("%d", n);
-    stack_ptr--;
+    stack_counter--;
 }
 //function equivalent to whitespace command "output character"
 // outputs the character corresponding to the top integer from the stack
 void output_char(char* argument)
 {
 
-    int n = *(stack_ptr-1);
+    int n = *(stack_ptr+stack_counter-1);
     printf("%c", n);
-    stack_ptr--;
+    stack_counter--;
 }
-
+void duplicate(char* argument)
+{
+    int n = *(stack_ptr+stack_counter-1);
+    *(stack_ptr+stack_counter) = n;
+    stack_counter++;
+}
